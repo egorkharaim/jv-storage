@@ -6,14 +6,20 @@ import java.util.Objects;
 public class StorageImpl<K, V> implements Storage<K, V> {
 
     private static final int MAX_SIZE = 10;
-    private Object[] keys = new Object[10];
-    private Object[] values = new Object[10];
-    private int size = 0;
+    private final Object[] keys;
+    private final Object[] values;
+    private int size;
+
+    public StorageImpl() {
+        this.keys = new Object[MAX_SIZE];
+        this.values = new Object[MAX_SIZE];
+        this.size = 0;
+    }
 
     @Override
     public void put(K key, V value) {
         for (int i = 0; i < size; i++) {
-            if (Objects.equals(keys[i], key)) {
+            if (isKeysEqual(keys[i], key)) {
                 values[i] = value;
                 return;
             }
@@ -26,7 +32,7 @@ public class StorageImpl<K, V> implements Storage<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public V get(K key) {
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i < size; i++) {
             if (Objects.equals(keys[i], key)) {
                 return (V) values[i];
             }
@@ -37,5 +43,10 @@ public class StorageImpl<K, V> implements Storage<K, V> {
     @Override
     public int size() {
         return size;
+    }
+
+    private boolean isKeysEqual(Object keyInStorage, Object keyToFind) {
+        return keyInStorage == keyToFind
+                || (keyInStorage != null && keyInStorage.equals(keyToFind));
     }
 }
